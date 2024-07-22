@@ -1,41 +1,55 @@
-//your code here
-// script.js
+const parentEle = document.getElementById("parent");
 
-document.addEventListener("DOMContentLoaded", () => {
-  let draggedItem = null;
+//console.log(parentEle.children.length);
+let dragStartId = "";
+let dragDroppedId = "";
 
-  // Event listeners for drag events
-  const dragStart = (event) => {
-    draggedItem = event.target;
-    event.dataTransfer.setData("text/html", draggedItem.outerHTML);
-  };
 
-  const dragOver = (event) => {
-    event.preventDefault();
-  };
+for(let i = 0; i < parentEle.children.length; i++){
+    let eachDiv = parentEle.children[i];
 
-  const dragDrop = (event) => {
-    event.preventDefault();
-    const target = event.target;
+    eachDiv.addEventListener("dragenter", function(event){
+        let id = event.target.id;
+        if(dragStartId === ""){
+            dragStartId = event.target.id;
+        }
+        console.log(dragStartId, "dragstartedId");
+        console.log("item has entered");
+    })
 
-    if (target.classList.contains("image")) {
-      // Swap images between the dragged and target elements
-      const draggedImage = draggedItem.style.backgroundImage;
-      draggedItem.style.backgroundImage = target.style.backgroundImage;
-      target.style.backgroundImage = draggedImage;
-    }
-  };
+    eachDiv.addEventListener("dragleave", function(event){
+        console.log("item has left");
+    })
 
-  const dragEnd = () => {
-    draggedItem = null;
-  };
+    eachDiv.addEventListener("dragover", function(event){
+        event.preventDefault();
+        console.log("item has hovered");
+    })
 
-  // Add event listeners to all the draggable divs
-  const divs = document.querySelectorAll(".image");
-  divs.forEach((div) => {
-    div.addEventListener("dragstart", dragStart);
-    div.addEventListener("dragover", dragOver);
-    div.addEventListener("drop", dragDrop);
-    div.addEventListener("dragend", dragEnd);
-  });
-});
+    eachDiv.addEventListener("drop", function(event){
+        event.preventDefault();
+        dragDroppedId = eachDiv.id;
+        console.log("item has droped");
+
+
+
+        console.log(dragStartId, "for drop purpose");
+        console.log(dragDroppedId, "for for drop purpose");
+
+        //changing features 
+
+        let dropEle = document.getElementById(`${dragDroppedId}`);
+        let dragEle = document.getElementById(`${dragStartId}`);
+
+        let temp = dropEle.id;
+        let temp2 = dropEle.innerText;
+
+        dropEle.id = dragEle.id;
+        dragEle.id = temp;
+
+        dropEle.innerText = dragEle.innerText;
+        dragEle.innerText = temp2;
+
+
+    })
+}
