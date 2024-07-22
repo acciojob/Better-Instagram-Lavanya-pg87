@@ -1,24 +1,37 @@
-//your code here
-let dragindex=0;
-let clone=" ";
-function drag(e){
-e.dataTransfer.setData("text",e.target.id);
-}
-function allowDrop(e){
-e.preventDefault();
+const divs = document.querySelectorAll('.image');
+
+let dragSrcElement = null;
+
+function handleDragStart(e) {
+  dragSrcElement = this;
+  e.dataTransfer.effectAllowed = 'move';
 }
 
-function drop(e){
+function handleDragOver(e) {
+  if (e.preventDefault) {
     e.preventDefault();
-    clone=e.target.cloneNode(true);
-    let data=e.dataTransfer.getData("text");
-    if(clone.id !== data) {
-    let nodelist=document.getElementById("parent").childNodes;
-    for(let i=0;i<nodelist.length;i++){
-    if(nodelist[i].id===data){
-    dragindex=i;}
-    }
-    document.getElementById("parent").replaceChild(document.getElementById(data),e.target);
-    document.getElementById("parent").insertBefore(clone,document.getElementById("parent").childNodes[dragindex]);
-    }
-    }
+  }
+  e.dataTransfer.dropEffect = 'move';
+  return false;
+}
+
+function handleDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
+  if (dragSrcElement !== this) {
+    // Swap background image URLs
+    const tempBackground = this.style.backgroundImage;
+    this.style.backgroundImage = dragSrcElement.style.backgroundImage;
+    dragSrcElement.style.backgroundImage = tempBackground;
+  }
+
+  return false;
+}
+
+divs.forEach(div => {
+  div.addEventListener('dragstart', handleDragStart, false);
+  div.addEventListener('dragover', handleDragOver, false);
+  div.addEventListener('drop', handleDrop, false);
+});
