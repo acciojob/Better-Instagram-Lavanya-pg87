@@ -1,34 +1,47 @@
-let c= document.getElementsByClassName('image')
-for(let i=0;i<c.length;i++){
-    c[i].addEventListener('dragstart',(event)=>{
-       event.dataTransfer.setData('text',event.target.id)
-    })
-    c[i].addEventListener('dragover',(event)=>{
-        event.preventDefault()
-    })
-    c[i].addEventListener('drop',(event)=>{
-        let g = event.target.id
-        let t= event.dataTransfer.getData('text')
-        let dragref=document.getElementById(t)
-        let dropref=document.getElementById(g)
-        let d= document.getElementById('parent')
-        let dc=d.childNodes
-        let dragindex=0;
-        console.log(dragref)
-        for(let j=0;j<dc.length;j++){
-            if(dc[j].id==t){
-                dragindex=j
-                break
-            }
-        }
-        console.log(dragindex)
-        let temp2=event.target.cloneNode(true)
-        temp2.draggable='true'
-        temp2.droppable='true'
-        console.log(temp2)
-        d.replaceChild(dragref,dropref)
-        d.replaceChild(temp2,document.getElementById('parent').childNodes[dragindex])
-})
+//your code here
+var dragSrcElement = null;
+
+function handleDragStart(e) {
+  dragSrcElement = this;
+
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.innerHTML);
 }
- 
-images.forEach(dragdrop);
+
+function handleDragOver(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
+
+  e.dataTransfer.dropEffect = 'move';
+
+  return false;
+}
+
+function handleDrop(e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
+
+  if (dragSrcElement !== this) {
+    dragSrcElement.innerHTML = this.innerHTML;
+    this.innerHTML = e.dataTransfer.getData('text/html');
+  }
+
+  return false;
+}
+
+function handleDragEnd(e) {
+  var images = document.querySelectorAll('.image');
+  [].forEach.call(images, function(image) {
+    image.classList.remove('over');
+  });
+}
+
+var images = document.querySelectorAll('.image');
+[].forEach.call(images, function(image) {
+  image.addEventListener('dragstart', handleDragStart, false);
+  image.addEventListener('dragover', handleDragOver, false);
+  image.addEventListener('drop', handleDrop, false);
+  image.addEventListener('dragend', handleDragEnd, false);
+});
